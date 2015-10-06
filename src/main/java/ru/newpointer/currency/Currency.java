@@ -3,7 +3,7 @@ package ru.newpointer.currency;
 /**
  * @author isavin
  */
-public class Currency implements IResponse {
+public class Currency {
 
     private String code;
     private String rate = "unknown";

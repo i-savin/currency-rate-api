@@ -2,12 +2,18 @@ package ru.newpointer.currency;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * @author isavin
@@ -16,38 +22,31 @@ import java.io.IOException;
 public class CurrencyController {
 
     private final static Logger logger = LoggerFactory.getLogger(CurrencyController.class);
-    private static final String XML_DAILY_COURSES_URL = "http://www.cbr.ru/scripts/XML_daily.asp";
-    private static final String DATE_APPENDER = "?date_req=%s";
+    private static final String XML_DAILY_COURSES_URL = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=";
+
+    @Resource
+    private CurrencyService currencyService;
+
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     @RequestMapping("/currency/api/{code}")
-    public IResponse currency(@PathVariable String code) {
+    public ResponseEntity<Currency> currency(@PathVariable String code) {
         logger.info("Getting currency rate for: [{}]", code);
-        return getResponse(XML_DAILY_COURSES_URL, code);
+        LocalDate date = LocalDate.now().plusDays(1);
+        return toEntity(currencyService.getCurrency(code));
     }
 
     @RequestMapping("/currency/api/{code}/{date}")
-    public IResponse currency(@PathVariable String code,
+    public ResponseEntity<Currency> currency(@PathVariable String code,
                              @PathVariable String date) {
         logger.info("Getting currency rate for: [{}, {}]", code, date);
-        String[] dateParts = date.split("-");
-        StringBuffer dateFormatted = new StringBuffer(dateParts[2]);
-        dateFormatted.append("/")
-                .append(dateParts[1])
-                .append("/")
-                .append(dateParts[0]);
-        return getResponse(XML_DAILY_COURSES_URL + String.format(DATE_APPENDER, dateFormatted.toString()), code);
-    }
-
-    private IResponse getResponse(String url, String code) {
+        LocalDate localDate;
         try {
-            return getCurrencyFromCbr(url, code);
-        } catch (IOException e) {
-            logger.error("Error reading page content: [{}]", e);
-            return new Fault("Error reading page content", e.toString());
-        } catch (XMLStreamException e) {
-            logger.error("Error parsing XML content: [{}]", e);
-            return new Fault("Error parsing XML content", e.toString());
+            localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (Exception e) {
+            return toEntity(Optional.empty());
         }
+        return toEntity(currencyService.getCurrency(code, localDate));
     }
 
     private Currency getCurrencyFromCbr(String url, String code) throws IOException, XMLStreamException {
@@ -55,5 +54,12 @@ public class CurrencyController {
         String xmlContent = reader.getPageContent();
         XmlCurrenciesParser parser = new XmlCurrenciesParser(xmlContent);
         return parser.getCurrencyByCode(code);
+    }
+
+    private <T> ResponseEntity<T> toEntity(Optional<T> body) {
+        if (body.isPresent()) {
+            return new ResponseEntity<T>(body.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
