@@ -1,4 +1,7 @@
-package ru.newpointer.currency;
+package ru.newpointer.currency.domain;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * @author isavin
@@ -6,8 +9,8 @@ package ru.newpointer.currency;
 public class Currency {
 
     private String code;
-    private String rate = "unknown";
-    private String date;
+    private BigDecimal rate;
+    private LocalDate date;
 
     public String getCode() {
         return code;
@@ -17,20 +20,20 @@ public class Currency {
         this.code = code;
     }
 
-    public String getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(String rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 
-    public String getDate() {
+    public LocalDate BigDecimal() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDate(LocalDate date) {
+        this.date = LocalDate.from(date);
     }
 
     @Override

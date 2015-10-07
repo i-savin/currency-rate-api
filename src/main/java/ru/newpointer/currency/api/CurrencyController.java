@@ -1,4 +1,4 @@
-package ru.newpointer.currency;
+package ru.newpointer.currency.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.newpointer.currency.domain.Currency;
+import ru.newpointer.currency.service.CurrencyService;
 
 import javax.annotation.Resource;
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -47,13 +47,6 @@ public class CurrencyController {
             return toEntity(Optional.empty());
         }
         return toEntity(currencyService.getCurrency(code, localDate));
-    }
-
-    private Currency getCurrencyFromCbr(String url, String code) throws IOException, XMLStreamException {
-        HttpReader reader = new HttpReader(url);
-        String xmlContent = reader.getPageContent();
-        XmlCurrenciesParser parser = new XmlCurrenciesParser(xmlContent);
-        return parser.getCurrencyByCode(code);
     }
 
     private <T> ResponseEntity<T> toEntity(Optional<T> body) {
