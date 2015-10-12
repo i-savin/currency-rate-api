@@ -1,12 +1,17 @@
 package ru.newpointer.currency.repository.impl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 
 /**
  * Created by isavin on 07.10.2015.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Valute {
 
     @XmlAttribute(name = "ID")
@@ -19,7 +24,9 @@ public class Valute {
     private int nominal;
     @XmlElement(name = "Name")
     private String name;
+
     @XmlElement(name = "Value")
+    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     private BigDecimal value;
 
     public String getId() {
@@ -68,5 +75,30 @@ public class Valute {
 
     public void setValue(BigDecimal value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Valute{" +
+                "id='" + id + '\'' +
+                ", numCode='" + numCode + '\'' +
+                ", charCode='" + charCode + '\'' +
+                ", nominal=" + nominal +
+                ", name='" + name + '\'' +
+                ", value=" + value +
+                '}';
+    }
+
+    private final static class BigDecimalAdapter extends XmlAdapter<String, BigDecimal> {
+
+        @Override
+        public BigDecimal unmarshal(String v) throws Exception {
+            return new BigDecimal(v.replaceAll(",", "."));
+        }
+
+        @Override
+        public String marshal(BigDecimal v) throws Exception {
+            return v.toString();
+        }
     }
 }
