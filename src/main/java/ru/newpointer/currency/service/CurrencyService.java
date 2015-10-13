@@ -1,5 +1,6 @@
 package ru.newpointer.currency.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.newpointer.currency.domain.Currency;
 import ru.newpointer.currency.repository.CurrencyRepository;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Service
 public class CurrencyService {
 
-    @Resource
+    @Autowired
     private CurrencyRepository repository;
 
     public Optional<Currency> getCurrency(String code) {

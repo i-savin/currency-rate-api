@@ -2,18 +2,24 @@ package ru.newpointer.currency.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import ru.newpointer.currency.domain.Currency;
 import ru.newpointer.currency.repository.CurrencyRepository;
 
 import java.math.BigDecimal;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by isavin on 07.10.2015.
  */
+@Repository
 public class CbrCurrencyRepository implements CurrencyRepository {
 
     private final static Logger logger = LoggerFactory.getLogger(CbrCurrencyRepository.class);
@@ -21,6 +27,12 @@ public class CbrCurrencyRepository implements CurrencyRepository {
     private final static DateTimeFormatter cbrFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private RestTemplate restTemplate = new RestTemplate();
+
+    static {
+        Properties props = System.getProperties();
+        props.put("http.proxyHost", "TMGHQ.office.finam.ru");
+        props.put("http.proxyPort", "8080");
+    }
 
     @Override
     public Optional<Currency> getCurrency(String code, LocalDate date) {

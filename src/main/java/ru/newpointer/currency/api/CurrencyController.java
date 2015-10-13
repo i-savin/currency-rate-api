@@ -2,6 +2,7 @@ package ru.newpointer.currency.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,7 @@ public class CurrencyController {
     private final static Logger logger = LoggerFactory.getLogger(CurrencyController.class);
     private static final String XML_DAILY_COURSES_URL = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=";
 
-    @Resource
+    @Autowired
     private CurrencyService currencyService;
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
