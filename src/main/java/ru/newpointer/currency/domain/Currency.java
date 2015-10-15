@@ -28,7 +28,7 @@ public class Currency {
         this.rate = rate;
     }
 
-    public LocalDate BigDecimal() {
+    public LocalDate getDate() {
         return date;
     }
 

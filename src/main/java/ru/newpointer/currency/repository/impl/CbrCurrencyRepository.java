@@ -2,19 +2,15 @@ package ru.newpointer.currency.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import ru.newpointer.currency.domain.Currency;
 import ru.newpointer.currency.repository.CurrencyRepository;
 
 import java.math.BigDecimal;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Created by isavin on 07.10.2015.
@@ -28,14 +24,10 @@ public class CbrCurrencyRepository implements CurrencyRepository {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    static {
-        Properties props = System.getProperties();
-        props.put("http.proxyHost", "TMGHQ.office.finam.ru");
-        props.put("http.proxyPort", "8080");
-    }
-
     @Override
     public Optional<Currency> getCurrency(String code, LocalDate date) {
+
+        logger.info("Getting currency for code [{}] and date [{}]", code, date);
 
         ValCurs valCurs = restTemplate.getForObject(CBR_URL, ValCurs.class, date.format(cbrFormatter));
         logger.info("ValCurs: {}", valCurs);
@@ -48,6 +40,7 @@ public class CbrCurrencyRepository implements CurrencyRepository {
         currency.setCode(code);
         currency.setDate(valCurs.getDate());
         currency.setRate(valute.get().getValue().divide(BigDecimal.valueOf(valute.get().getNominal())));
+        logger.info("Currency: {}", currency);
 
         return Optional.of(currency);
     }

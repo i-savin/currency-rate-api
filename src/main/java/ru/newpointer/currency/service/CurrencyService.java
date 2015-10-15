@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.newpointer.currency.domain.Currency;
 import ru.newpointer.currency.repository.CurrencyRepository;
 
-import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.Optional;
 

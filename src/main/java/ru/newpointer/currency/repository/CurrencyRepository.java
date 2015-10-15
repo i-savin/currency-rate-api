@@ -9,7 +9,6 @@ import java.util.Optional;
 /**
  * Created by isavin on 07.10.2015.
  */
-@Repository
 public interface CurrencyRepository {
 
     public Optional<Currency> getCurrency(String code, LocalDate date);
