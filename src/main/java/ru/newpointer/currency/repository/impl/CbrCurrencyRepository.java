@@ -12,9 +12,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-/**
- * Created by isavin on 07.10.2015.
- */
 @Repository
 public class CbrCurrencyRepository implements CurrencyRepository {
 
@@ -22,7 +19,7 @@ public class CbrCurrencyRepository implements CurrencyRepository {
     private final static String CBR_URL = "http://www.cbr.ru/scripts/XML_daily.asp?date_req={date}";
     private final static DateTimeFormatter cbrFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public Optional<Currency> getCurrency(String code, LocalDate date) {

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.newpointer.currency.domain.Currency;
 import ru.newpointer.currency.service.CurrencyService;
 
-import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -23,18 +22,15 @@ import java.util.Optional;
 public class CurrencyController {
 
     private final static Logger logger = LoggerFactory.getLogger(CurrencyController.class);
-    private static final String XML_DAILY_COURSES_URL = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=";
 
     @Autowired
     private CurrencyService currencyService;
-
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     @RequestMapping("/currency/api/{code}")
     public ResponseEntity<Currency> currency(@PathVariable String code) {
         logger.info("Getting currency rate for: [{}]", code);
         LocalDate date = LocalDate.now().plusDays(1);
-        return toEntity(currencyService.getCurrency(code));
+        return toEntity(currencyService.getCurrency(code, date));
     }
 
     @RequestMapping("/currency/api/{code}/{date}")
